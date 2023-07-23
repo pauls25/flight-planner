@@ -56,22 +56,4 @@ public class AirportService {
         airportRepository.clearAirports();
     }
 
-
-    /*
-    * returns `true` if airport exists in airportRepository*/
-    public boolean airportExists(Airport newAirport) {
-        boolean airportExists = false;
-
-        for (Airport a: airportRepository.getAirports()) {
-
-            if (newAirport.getAirport().equalsIgnoreCase(a.getAirport()) &&
-                    newAirport.getCity().equalsIgnoreCase(a.getCity()) &&
-                    newAirport.getCountry().equalsIgnoreCase(a.getCountry())
-            ) {
-                airportExists = true;
-                break;
-            }
-        }
-        return airportExists;
-    }
 }

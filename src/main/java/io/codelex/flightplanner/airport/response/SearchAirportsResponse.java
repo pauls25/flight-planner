@@ -1,6 +1,5 @@
 package io.codelex.flightplanner.airport.response;
 
-// todo šo dzēst?
 public class SearchAirportsResponse {
     private String country;
     private String city;

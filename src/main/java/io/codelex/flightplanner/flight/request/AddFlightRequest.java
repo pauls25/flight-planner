@@ -6,11 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class AddFlightRequest {
-//    from: Airport;
-//    to: Airport;
-//    carrier: string;
-//    departureTime: string;
-//    arrivalTime: string;
+
     @Valid
     @NotNull
     private Airport from;

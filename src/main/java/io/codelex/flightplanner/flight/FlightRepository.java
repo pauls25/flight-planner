@@ -64,7 +64,6 @@ public class FlightRepository {
     }
     public Map<Long, Flight> getFlights() {
         return flights;
-//        return new ArrayList<>(flights.values());
     }
 
 }

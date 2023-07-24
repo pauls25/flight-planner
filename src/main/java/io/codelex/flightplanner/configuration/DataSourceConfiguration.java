@@ -15,7 +15,7 @@ public class DataSourceConfiguration {
                 .driverClassName("org.postgresql.Driver")
                 .url("jdbc:postgresql://localhost:5432/postgres")
                 .username("postgres")
-                .password("docker")
+                .password("123")
                 .build();
     }
 }

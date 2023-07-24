@@ -4,7 +4,5 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <include file="/db/changelog/changes/001-create-airports-table.sql"/>
-    <include file="/db/changelog/changes/002-create-flights-table.sql"/>
-
+    <include file="/db/changelog/changes/001-create-airports-flights-tables.sql"/>
 </databaseChangeLog>

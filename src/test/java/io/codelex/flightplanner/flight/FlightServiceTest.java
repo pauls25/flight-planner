@@ -1,6 +1,6 @@
 package io.codelex.flightplanner.flight;
 
-import io.codelex.flightplanner.airport.AirportService;
+import io.codelex.flightplanner.airport.AirportInMemoryService;
 import io.codelex.flightplanner.airport.domain.Airport;
 import io.codelex.flightplanner.flight.domain.Flight;
 import io.codelex.flightplanner.flight.request.AddFlightRequest;
@@ -21,15 +21,15 @@ import java.util.Map;
 @ExtendWith(MockitoExtension.class)
 public class FlightServiceTest {
     @Mock
-    AirportService airportService;
+    AirportInMemoryService airportService;
     @Mock
-    FlightRepository flightRepository;
+    FlightInMemoryRepository flightRepository;
 
     @Mock
     IdGenerator idGenerator;
 
     @InjectMocks
-    FlightService flightService;
+    FlightInMemoryService flightService;
 
     @Captor
     ArgumentCaptor<Flight> flightArgumentCaptor;

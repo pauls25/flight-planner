@@ -1,8 +1,8 @@
 package io.codelex.flightplanner;
 
-import io.codelex.flightplanner.airport.AirportRepository;
+import io.codelex.flightplanner.airport.AirportInMemoryRepository;
 import io.codelex.flightplanner.airport.domain.Airport;
-import io.codelex.flightplanner.flight.FlightRepository;
+import io.codelex.flightplanner.flight.FlightInMemoryRepository;
 import io.codelex.flightplanner.flight.domain.Flight;
 import io.codelex.flightplanner.flight.request.AddFlightRequest;
 import org.junit.jupiter.api.Assertions;
@@ -20,10 +20,10 @@ class FlightPlannerApplicationTests {
 	TestingController testingController;
 
 	@Autowired
-	FlightRepository flightRepository;
+    FlightInMemoryRepository flightRepository;
 
 	@Autowired
-	AirportRepository airportRepository;
+    AirportInMemoryRepository airportRepository;
 
 	@Test
 	public void addFlightsTest() {

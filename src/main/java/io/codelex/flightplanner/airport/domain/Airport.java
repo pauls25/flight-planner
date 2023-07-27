@@ -1,10 +1,20 @@
 package io.codelex.flightplanner.airport.domain;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.Objects;
 
+@Entity
+//TODO see if unique constraint is necesary
+//TODO see wahts up with unresolved names
+@Table(name="airports", uniqueConstraints = {@UniqueConstraint(columnNames = {"country", "city", "airport"})})
 public class Airport {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "airport_id")
+    private Integer id;
     @NotBlank
     private String country;
     @NotBlank
@@ -17,6 +27,8 @@ public class Airport {
         this.city = city;
         this.airport = airport;
     }
+
+    public Airport() {}
 
     public String getCountry() {
         return country;

@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "flightplanner.service.version",
+      "type": "java.lang.String",
+      "description": "Configures which storage option is used - in-memory variable or postgres db "
+    }
+  ] }

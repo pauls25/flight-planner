@@ -16,8 +16,10 @@ CREATE TABLE flights
     from_airport_id bigint,
     to_airport_id bigint,
     carrier varchar(255),
-    departure_time timestamp,
-    arrival_time timestamp,
-    FOREIGN KEY (from_airport_id) REFERENCES airports (airport_id),
-    FOREIGN KEY (to_airport_id) REFERENCES airports (airport_id)
+--     departure_time timestamp,
+--     arrival_time timestamp,
+    departure_time varchar(255),
+    arrival_time varchar(255),
+    FOREIGN KEY (from_airport_id) REFERENCES airports (airport_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (to_airport_id) REFERENCES airports (airport_id) ON DELETE CASCADE ON UPDATE CASCADE
 );

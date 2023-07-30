@@ -75,7 +75,7 @@ public class AddFlightRequest {
     public String toString() {
         return "AddFlightRequest{" +
                 "carrier='" + carrier + '\'' +
-                "  from='" + from + '\'' +
+                ", from='" + from + '\'' +
                 ", to='" + to + '\'' +
                 ", carrier='" + carrier + '\'' +
                 ", departureTime='" + departureTime + '\'' +

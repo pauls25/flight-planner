@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
-//TODO see if unique constraint is necesary
-//TODO see wahts up with unresolved names
 @Table(name="airports", uniqueConstraints = {@UniqueConstraint(columnNames = {"country", "city", "airport"})})
 public class Airport {
 

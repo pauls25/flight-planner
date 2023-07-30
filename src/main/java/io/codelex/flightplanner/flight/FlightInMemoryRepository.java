@@ -15,9 +15,10 @@ public class FlightInMemoryRepository {
     private volatile  Map<Long, Flight> flights = new HashMap<>();
     Logger logger = LoggerFactory.getLogger(FlightInMemoryRepository.class);
 
-    public synchronized void addFlight(Flight flight) {
+    public synchronized Flight addFlight(Flight flight) {
         flights.put(flight.getId(), flight);
         logger.info("Added flight to FlightRepository at id: " + flight.getId() + " " + flight);
+        return flight;
     }
 
     public void clearFlights() {

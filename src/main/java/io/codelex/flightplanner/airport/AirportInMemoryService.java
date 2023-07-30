@@ -13,11 +13,12 @@ import java.util.regex.Pattern;
 public class AirportInMemoryService implements AirportService{
     private AirportInMemoryRepository airportInMemoryRepository;
     Logger logger = LoggerFactory.getLogger(AirportInMemoryService.class);
+
     public AirportInMemoryService(AirportInMemoryRepository airportInMemoryRepository) {
         this.airportInMemoryRepository = airportInMemoryRepository;
     }
 
-    public void addAirport(Airport newAirport){
+    public Airport addAirport(Airport newAirport){
         boolean airportExists = false;
         for (Airport airport : airportInMemoryRepository.getAirports()) {
             if (airport.getAirport().equalsIgnoreCase(newAirport.getAirport())){
@@ -25,7 +26,8 @@ public class AirportInMemoryService implements AirportService{
                 break;
             }
         }
-        if ( ! airportExists){airportInMemoryRepository.addAirport(newAirport);}
+        if ( ! airportExists){ airportInMemoryRepository.addAirport(newAirport);}
+        return newAirport;
     }
 
 
@@ -56,8 +58,8 @@ public class AirportInMemoryService implements AirportService{
     }
 
 //    @Override
-    public Airport findOrCreateAirport(String country, String city, String airportName) {
-        return null;
-    }
+//    public Airport findOrCreateAirport(String country, String city, String airportName) {
+//        return null;
+//    }
 
 }

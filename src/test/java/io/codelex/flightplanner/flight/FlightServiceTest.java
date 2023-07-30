@@ -48,7 +48,7 @@ public class FlightServiceTest {
         AddFlightRequest addFlightRequest = new AddFlightRequest(fromAirport, toAirport, carrier, departureTime, arrivalTime);
 
         flightService.addFlight(addFlightRequest);
-        Mockito.verify(flightRepository).addFlight(longArgumentCaptor.capture(), flightArgumentCaptor.capture());
+        Mockito.verify(flightRepository).addFlight( flightArgumentCaptor.capture());
 
         Long addedId = longArgumentCaptor.getValue();
         Flight addedFlight = flightArgumentCaptor.getValue();

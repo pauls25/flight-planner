@@ -18,39 +18,18 @@ public class AirportDatabaseService implements AirportService{
     }
 
     @Override
-    public void addAirport(Airport newAirport) {
-
-        List<Airport> allAirports = airportRepository.findAll();
-        logger.info("Found airports from database: " + allAirports);
-
-        if (allAirports.size() ==0){
-            airportRepository.save(newAirport);
-            logger.info("added airports from service to db: " + newAirport);
-        } else {
-            boolean airportExists = false;
-            for (Airport airport: allAirports){
-                if (airport.getAirport().equalsIgnoreCase(newAirport.getAirport())){
-                    airportExists = true;
-                    logger.info("Found matching airports: " + airport.getAirport() + " " + newAirport.getAirport());
-                    break;
-                }
-            }
-            if (!airportExists) {
-                airportRepository.save(newAirport);
-                logger.info("added airports from service to db: " + newAirport);
-            }
-        }
-
-    }
-
-    public Airport findOrCreateAirport(String country, String city, String airportName) {
-        Airport existingAirport = airportRepository.findByCountryAndCityAndAirport(country, city, airportName);
+    public Airport addAirport(Airport newAirport) {
+        Airport existingAirport = airportRepository.findByCountryAndCityAndAirport(newAirport.getCountry(), newAirport.getCity(), newAirport.getAirport());
+        // todo add logging back
         if (existingAirport != null) {
+            logger.info("");
             return existingAirport;
         } else {
-            Airport newAirport = new Airport(country, city, airportName);
-            return airportRepository.save(newAirport);
+            Airport airport = new Airport(newAirport.getCountry(), newAirport.getCity(), newAirport.getAirport());
+
+            return airportRepository.save(airport);
         }
+
     }
 
     @Override

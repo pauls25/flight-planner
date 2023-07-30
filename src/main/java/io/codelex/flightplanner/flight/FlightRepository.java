@@ -12,13 +12,12 @@ import java.util.List;
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, Long> {
 
-    //TODO rename to fetchFlightsByValues
     @Query("SELECT f FROM Flight f " +
             "WHERE f.from.airport ILIKE :from " +
             "AND f.to.airport ILIKE :to " +
             "AND substring(f.departureTime, 1, 10) ILIKE :departure_date")
-    List<Flight> fetchFlightByValues(@Param("from") String from,
-                                     @Param("to") String to,
-                                     @Param("departure_date") String departure_date);
+    List<Flight> fetchFlightsByValues(@Param("from") String from,
+                                      @Param("to") String to,
+                                      @Param("departure_date") String departure_date);
 
 }

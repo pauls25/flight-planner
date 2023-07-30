@@ -30,7 +30,6 @@ public class FlightInMemoryService implements FlightService{
     }
 
     public synchronized AddFlightResponse addFlight(AddFlightRequest flightRequest) {
-        AddFlightResponse response = null;
         if (validateAddFlightRequest(flightRequest)){
             Long id = generateId();
             Flight newFlight = new Flight(
@@ -45,14 +44,14 @@ public class FlightInMemoryService implements FlightService{
             airportService.addAirport(flightRequest.getTo());
             airportService.addAirport(flightRequest.getFrom());
 
-            flightInMemoryRepository.addFlight(newFlight);
+            Flight addedFlight = flightInMemoryRepository.addFlight(newFlight);
 
-            response = new AddFlightResponse(newFlight);
+            return new AddFlightResponse(addedFlight);
+        } else {
+            throw new AddFlightException("Failed to add flight for request: " + flightRequest);
         }
-        // TODO add an exception or handle validation failure to null differently
-        return response;
-
     }
+
     public boolean validateAddFlightRequest(AddFlightRequest flightRequest){
 
         boolean flightDoesntExist = validateFlight(flightRequest);
@@ -63,18 +62,18 @@ public class FlightInMemoryService implements FlightService{
     }
 
     public boolean validateFlight(AddFlightRequest addFlightRequest) {
+
         for (Flight flight : flightInMemoryRepository.getFlights().values()) {
             if (
-                    addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport()) &&
-                    addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport()) &&
-                    addFlightRequest.getDepartureTime().trim().equalsIgnoreCase(flight.getDepartureTime()) &&
-                    addFlightRequest.getArrivalTime().trim().equalsIgnoreCase(flight.getArrivalTime())
+                addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport()) &&
+                addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport()) &&
+                addFlightRequest.getDepartureTime().trim().equalsIgnoreCase(flight.getDepartureTime()) &&
+                addFlightRequest.getArrivalTime().trim().equalsIgnoreCase(flight.getArrivalTime())
             ){
                 throw new FlightAlreadyAddedException("Flight already added: " + flight);
             }
         }
         return true;
-
     }
 
     public void clearFlight() {
@@ -90,7 +89,6 @@ public class FlightInMemoryService implements FlightService{
         }
     }
 
-
     private Long generateId(){
         return idGenerator.getCurrentId();
     }
@@ -99,6 +97,7 @@ public class FlightInMemoryService implements FlightService{
         Long flightId = Long.valueOf(id);
 
         if (flightInMemoryRepository.getFlightIds().contains(flightId)){
+
             flightInMemoryRepository.deleteFlightByFlightId(flightId);
             logger.info("Deleted flight from Repository id: " + id);
         }
@@ -107,9 +106,8 @@ public class FlightInMemoryService implements FlightService{
         }
     }
 
-    // TODO should add documentation or comments on what is a value
     public SearchFlightResponse searchFlightByValues(SearchFlightRequest request) {
-        // TODO move to validation and call validation method?
+
         if (request.getTo().equals(request.getFrom())) {
             throw new MatchingAirportsException("To and from airports in SearchFlightsRequest match!");
 
@@ -130,7 +128,7 @@ public class FlightInMemoryService implements FlightService{
 
         if ( departureTime.equals(arrivalTime) || arrivalTime.isBefore(departureTime)) {
             logger.info(String.format("Dates %s and %s are invalid", flightRequest.getArrivalTime(), flightRequest.getDepartureTime()));
-            throw new BadDateTimeException("DateTimes aren't valid " + arrivalTime + " " + departureTime);
+            throw new FlightRequestValidationException("DateTimes aren't valid " + arrivalTime + " " + departureTime);
         } else {
             return true;
         }
@@ -144,7 +142,7 @@ public class FlightInMemoryService implements FlightService{
         if ( toAirport.equalsIgnoreCase(fromAirport))
         {
             logger.info("Airports match each other: " + flightRequest.getTo() + " " + flightRequest.getFrom());
-            throw new MatchingAirportsException("To and From airports are the same!");
+            throw new FlightRequestValidationException("To and From airports are the same!");
         } else {
             return true;
         }

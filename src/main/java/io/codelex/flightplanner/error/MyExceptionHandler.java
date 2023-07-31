@@ -50,14 +50,6 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, message, new HttpHeaders(), HttpStatus.OK, request);
     }
 
-    @ExceptionHandler({NoSuchFlightException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    protected ResponseEntity<Object> handleNoSuchFlightException(NoSuchFlightException ex, WebRequest request){
-
-        String message = ex.getMessage();
-        return handleExceptionInternal(ex, message, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
-    }
-
     @ExceptionHandler({FlightAlreadyAddedException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     protected ResponseEntity<Object> handleFlightAlreadyAddedException(FlightAlreadyAddedException ex, WebRequest request){

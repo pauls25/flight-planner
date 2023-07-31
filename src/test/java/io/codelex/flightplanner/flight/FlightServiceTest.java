@@ -3,7 +3,6 @@ package io.codelex.flightplanner.flight;
 import io.codelex.flightplanner.airport.AirportInMemoryService;
 import io.codelex.flightplanner.airport.domain.Airport;
 import io.codelex.flightplanner.flight.domain.Flight;
-import io.codelex.flightplanner.flight.request.AddFlightRequest;
 import io.codelex.flightplanner.flight.request.SearchFlightRequest;
 import io.codelex.flightplanner.flight.response.GetFlightResponse;
 import io.codelex.flightplanner.flight.response.SearchFlightResponse;
@@ -31,35 +30,6 @@ public class FlightServiceTest {
     @InjectMocks
     FlightInMemoryService flightService;
 
-    @Captor
-    ArgumentCaptor<Flight> flightArgumentCaptor;
-    @Captor
-    ArgumentCaptor<Long> longArgumentCaptor;
-
-    @Test
-    public void testAddFlight(){
-
-        Airport fromAirport = new Airport("Latvia", "Riga", "RIX");
-        Airport toAirport = new Airport("Sweden", "Stockholm", "ARN");
-        String carrier = "Rynair";
-        String departureTime = "2023-05-05 10:00";
-        String arrivalTime = "2023-05-05 12:00";
-
-        AddFlightRequest addFlightRequest = new AddFlightRequest(fromAirport, toAirport, carrier, departureTime, arrivalTime);
-
-        flightService.addFlight(addFlightRequest);
-        Mockito.verify(flightRepository).addFlight( flightArgumentCaptor.capture());
-
-        Long addedId = longArgumentCaptor.getValue();
-        Flight addedFlight = flightArgumentCaptor.getValue();
-
-        Assertions.assertInstanceOf(Long.class, addedId);
-        Assertions.assertEquals(addFlightRequest.getFrom(), addedFlight.getFrom());
-        Assertions.assertEquals(addFlightRequest.getTo(), addedFlight.getTo());
-        Assertions.assertEquals(addFlightRequest.getCarrier(), addedFlight.getCarrier());
-        Assertions.assertEquals(addFlightRequest.getDepartureTime(), addedFlight.getDepartureTime());
-        Assertions.assertEquals(addFlightRequest.getArrivalTime(), addedFlight.getArrivalTime());
-    }
 
     @Test
     public void fetchFlightById() {

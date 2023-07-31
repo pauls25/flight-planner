@@ -17,7 +17,7 @@ public class ServiceConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix="flightplanner", name = "service.version", havingValue = "in-memory")
-    public AirportService getAirportServiceInMemoryVersion(AirportInMemoryRepository airportInMemoryRepository){
+    public AirportInMemoryService getAirportServiceInMemoryVersion(AirportInMemoryRepository airportInMemoryRepository){
         return new AirportInMemoryService(airportInMemoryRepository);
     }
 
@@ -27,6 +27,11 @@ public class ServiceConfiguration {
         return new FlightDatabaseService(flightRepository, airportDatabaseService);
     }
 
+//    @Bean
+//    @ConditionalOnProperty(prefix="flightplanner", name = "service.version", havingValue = "in-memory")
+//    public FlightService getAirportServiceInMemoryVersion(){
+//        return new AirportInMemoryService();
+//    }
     @Bean
     @ConditionalOnProperty(prefix="flightplanner", name = "service.version", havingValue = "in-memory")
     public FlightService getFlightServiceInMemoryVersion(FlightInMemoryRepository flightInMemoryRepository, AirportInMemoryService airportInMemoryService, IdGenerator idGenerator){

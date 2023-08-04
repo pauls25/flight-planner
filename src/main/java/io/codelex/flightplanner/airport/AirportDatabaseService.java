@@ -20,13 +20,13 @@ public class AirportDatabaseService implements AirportService{
     @Override
     public Airport addAirport(Airport newAirport) {
         Airport existingAirport = airportRepository.findByCountryAndCityAndAirport(newAirport.getCountry(), newAirport.getCity(), newAirport.getAirport());
-        // todo add logging back
+
         if (existingAirport != null) {
-            logger.info("");
+            logger.info("Airport already exist: " + existingAirport);
             return existingAirport;
         } else {
             Airport airport = new Airport(newAirport.getCountry(), newAirport.getCity(), newAirport.getAirport());
-
+            logger.info("Adding airport to repository: " + airport);
             return airportRepository.save(airport);
         }
 

@@ -1,7 +1,7 @@
 package io.codelex.flightplanner.flight;
 
 import io.codelex.flightplanner.AdminController;
-import io.codelex.flightplanner.airport.AirportInMemoryService;
+import io.codelex.flightplanner.airport.AirportService;
 import io.codelex.flightplanner.error.*;
 import io.codelex.flightplanner.flight.domain.Flight;
 import io.codelex.flightplanner.flight.request.AddFlightRequest;
@@ -17,20 +17,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
-public class FlightInMemoryService implements FlightService{
-    private FlightInMemoryRepository flightInMemoryRepository;
-    private AirportInMemoryService airportService;
-    private IdGenerator idGenerator;
+public class FlightInMemoryService implements FlightService {
     Logger logger = LoggerFactory.getLogger(AdminController.class);
+    private FlightInMemoryRepository flightInMemoryRepository;
+    private AirportService airportService;
+    private IdGenerator idGenerator;
 
-    public FlightInMemoryService(FlightInMemoryRepository flightInMemoryRepository, AirportInMemoryService airportService, IdGenerator idGenerator ){
+    public FlightInMemoryService(FlightInMemoryRepository flightInMemoryRepository, AirportService airportService, IdGenerator idGenerator) {
         this.flightInMemoryRepository = flightInMemoryRepository;
         this.airportService = airportService;
         this.idGenerator = idGenerator;
     }
 
     public synchronized AddFlightResponse addFlight(AddFlightRequest flightRequest) {
-        if (validateAddFlightRequest(flightRequest)){
+        if (validateAddFlightRequest(flightRequest)) {
             Long id = generateId();
             Flight newFlight = new Flight(
                     id,
@@ -52,24 +52,24 @@ public class FlightInMemoryService implements FlightService{
         }
     }
 
-    public boolean validateAddFlightRequest(AddFlightRequest flightRequest){
+    public boolean validateAddFlightRequest(AddFlightRequest flightRequest) {
 
         boolean flightDoesntExist = validateFlight(flightRequest);
-        boolean airportsAreValid =  validateRequestAirports(flightRequest);
+        boolean airportsAreValid = validateRequestAirports(flightRequest);
         boolean datesAreValid = validateDates(flightRequest);
 
-        return ( airportsAreValid & datesAreValid & flightDoesntExist);
+        return (airportsAreValid && datesAreValid && flightDoesntExist);
     }
 
     public boolean validateFlight(AddFlightRequest addFlightRequest) {
 
         for (Flight flight : flightInMemoryRepository.getFlights().values()) {
             if (
-                addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport()) &&
-                addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport()) &&
-                addFlightRequest.getDepartureTime().trim().equalsIgnoreCase(flight.getDepartureTime()) &&
-                addFlightRequest.getArrivalTime().trim().equalsIgnoreCase(flight.getArrivalTime())
-            ){
+                    addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport()) &&
+                            addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport()) &&
+                            addFlightRequest.getDepartureTime().trim().equalsIgnoreCase(flight.getDepartureTime()) &&
+                            addFlightRequest.getArrivalTime().trim().equalsIgnoreCase(flight.getArrivalTime())
+            ) {
                 throw new FlightAlreadyAddedException("Flight already added: " + flight);
             }
         }
@@ -82,26 +82,25 @@ public class FlightInMemoryService implements FlightService{
     }
 
     public synchronized GetFlightResponse fetchFlightById(Long flightId) {
-        if (flightInMemoryRepository.getFlights().keySet().contains(flightId)){
+        if (flightInMemoryRepository.getFlights().keySet().contains(flightId)) {
             return new GetFlightResponse(flightInMemoryRepository.getFlights().get(flightId));
         } else {
             throw new FlightIdDoesntExistException("Flight doesn't exist for id: " + flightId);
         }
     }
 
-    private Long generateId(){
+    private Long generateId() {
         return idGenerator.getCurrentId();
     }
 
     public synchronized void deleteFlightByFlightId(String id) {
         Long flightId = Long.valueOf(id);
 
-        if (flightInMemoryRepository.getFlightIds().contains(flightId)){
+        if (flightInMemoryRepository.getFlightIds().contains(flightId)) {
 
             flightInMemoryRepository.deleteFlightByFlightId(flightId);
             logger.info("Deleted flight from Repository id: " + id);
-        }
-        else {
+        } else {
             throw new NoFlightsWereDeletedException("Couldn't delete flight because Flight doesn't exist for id: " + id);
         }
     }
@@ -120,13 +119,13 @@ public class FlightInMemoryService implements FlightService{
         }
     }
 
-    public boolean validateDates(AddFlightRequest flightRequest){
+    public boolean validateDates(AddFlightRequest flightRequest) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         LocalDateTime arrivalTime = LocalDateTime.parse(flightRequest.getArrivalTime(), dateTimeFormatter);
         LocalDateTime departureTime = LocalDateTime.parse(flightRequest.getDepartureTime(), dateTimeFormatter);
 
-        if ( departureTime.equals(arrivalTime) || arrivalTime.isBefore(departureTime)) {
+        if (departureTime.equals(arrivalTime) || arrivalTime.isBefore(departureTime)) {
             logger.info(String.format("Dates %s and %s are invalid", flightRequest.getArrivalTime(), flightRequest.getDepartureTime()));
             throw new FlightRequestValidationException("DateTimes aren't valid " + arrivalTime + " " + departureTime);
         } else {
@@ -134,13 +133,12 @@ public class FlightInMemoryService implements FlightService{
         }
     }
 
-    public boolean validateRequestAirports(AddFlightRequest flightRequest){
+    public boolean validateRequestAirports(AddFlightRequest flightRequest) {
 
         String toAirport = flightRequest.getTo().getAirport().trim();
         String fromAirport = flightRequest.getFrom().getAirport().trim();
 
-        if ( toAirport.equalsIgnoreCase(fromAirport))
-        {
+        if (toAirport.equalsIgnoreCase(fromAirport)) {
             logger.info("Airports match each other: " + flightRequest.getTo() + " " + flightRequest.getFrom());
             throw new FlightRequestValidationException("To and From airports are the same!");
         } else {

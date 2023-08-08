@@ -10,13 +10,14 @@ public class AddFlightResponse {
     private String carrier;
     private String departureTime;
     private String arrivalTime;
+
     public AddFlightResponse(Flight flight) {
         this.id = flight.getId();
         this.from = flight.getFrom();
         this.to = flight.getTo();
         this.carrier = flight.getCarrier();
-        this.departureTime = flight.getDepartureTime().toString();
-        this.arrivalTime = flight.getArrivalTime().toString();
+        this.departureTime = flight.getDepartureTime();
+        this.arrivalTime = flight.getArrivalTime();
 
     }
 

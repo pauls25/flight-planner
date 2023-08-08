@@ -28,7 +28,7 @@ public class Flight {
     @Column(name = "arrival_time")
     private String arrivalTime;
 
-    public Flight( Long id, Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
+    public Flight(Long id, Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
         this.id = id;
         this.from = from;
         this.to = to;
@@ -36,7 +36,8 @@ public class Flight {
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
     }
-    public Flight( Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
+
+    public Flight(Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
         this.from = from;
         this.to = to;
         this.carrier = carrier;
@@ -97,14 +98,7 @@ public class Flight {
 
     @Override
     public String toString() {
-        return "Flight{" +
-                "id=" + id +
-                ", from=" + from.getAirport() +
-                ", to=" + to.getAirport() +
-                ", carrier='" + carrier + '\'' +
-                ", departureTime='" + departureTime + '\'' +
-                ", arrivalTime='" + arrivalTime + '\'' +
-                '}';
+        return "Flight{" + "id=" + id + ", from=" + from.getAirport() + ", to=" + to.getAirport() + ", carrier='" + carrier + '\'' + ", departureTime='" + departureTime + '\'' + ", arrivalTime='" + arrivalTime + '\'' + '}';
     }
 
     @Override

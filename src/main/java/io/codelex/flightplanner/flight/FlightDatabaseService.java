@@ -1,6 +1,5 @@
 package io.codelex.flightplanner.flight;
 
-import io.codelex.flightplanner.AdminController;
 import io.codelex.flightplanner.airport.AirportService;
 import io.codelex.flightplanner.airport.domain.Airport;
 import io.codelex.flightplanner.error.*;
@@ -19,11 +18,11 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class FlightDatabaseService implements FlightService{
+public class FlightDatabaseService implements FlightService {
 
-    FlightRepository flightRepository;
-    AirportService airportService;
-    Logger logger = LoggerFactory.getLogger(AdminController.class);
+    private FlightRepository flightRepository;
+    private AirportService airportService;
+    Logger logger = LoggerFactory.getLogger(FlightDatabaseService.class);
 
     public FlightDatabaseService(FlightRepository flightRepository, AirportService airportService) {
         this.flightRepository = flightRepository;
@@ -32,18 +31,12 @@ public class FlightDatabaseService implements FlightService{
 
     @Override
     public synchronized AddFlightResponse addFlight(AddFlightRequest flightRequest) {
-        if (validateAddFlightRequest(flightRequest)){
+        if (validateAddFlightRequest(flightRequest)) {
 
             Airport fromAirport = airportService.addAirport(flightRequest.getFrom());
             Airport toAirport = airportService.addAirport(flightRequest.getTo());
 
-            Flight newFlight = new Flight(
-                    fromAirport,
-                    toAirport,
-                    flightRequest.getCarrier(),
-                    flightRequest.getDepartureTime(),
-                    flightRequest.getArrivalTime()
-            );
+            Flight newFlight = new Flight(fromAirport, toAirport, flightRequest.getCarrier(), flightRequest.getDepartureTime(), flightRequest.getArrivalTime());
 
             Flight addedFlight = flightRepository.save(newFlight);
             logger.info("Added flight from service to db Flight: " + newFlight);
@@ -60,19 +53,18 @@ public class FlightDatabaseService implements FlightService{
         boolean airportsAreValid = validateRequestAirports(flightRequest);
         boolean datesAreValid = validateDates(flightRequest);
 
-        return ( airportsAreValid & datesAreValid & flightDoesntExist);
+        return (airportsAreValid && datesAreValid && flightDoesntExist);
     }
 
     @Override
     public boolean validateFlight(AddFlightRequest addFlightRequest) {
         // TODO ar streams
+        // TODO don't use findAll()
         for (Flight flight : flightRepository.findAll()) {
-            if (
-                addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport()) &&
-                addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport()) &&
-                addFlightRequest.getDepartureTime().trim().equalsIgnoreCase(flight.getDepartureTime()) &&
-                addFlightRequest.getArrivalTime().trim().equalsIgnoreCase(flight.getArrivalTime())
-            ){
+            if (addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport())
+                    && addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport())
+                    && addFlightRequest.getDepartureTime().trim().equalsIgnoreCase(flight.getDepartureTime())
+                    && addFlightRequest.getArrivalTime().trim().equalsIgnoreCase(flight.getArrivalTime())) {
                 throw new FlightAlreadyAddedException("Flight already added: " + flight);
             }
         }
@@ -88,7 +80,7 @@ public class FlightDatabaseService implements FlightService{
     public GetFlightResponse fetchFlightById(Long flightId) {
         Optional<Flight> foundFlight = flightRepository.findById(flightId);
 
-        if (foundFlight.isPresent()){
+        if (foundFlight.isPresent()) {
             return new GetFlightResponse(foundFlight.get());
         } else {
             throw new FlightIdDoesntExistException("Flight doesn't exist for id: " + flightId);
@@ -125,12 +117,12 @@ public class FlightDatabaseService implements FlightService{
         LocalDateTime arrivalTime = LocalDateTime.parse(flightRequest.getArrivalTime(), dateTimeFormatter);
         LocalDateTime departureTime = LocalDateTime.parse(flightRequest.getDepartureTime(), dateTimeFormatter);
 
-        if ( departureTime.equals(arrivalTime) ) {
+        if (departureTime.equals(arrivalTime)) {
 
             logger.info(String.format("Dates %s and %s are invalid", flightRequest.getArrivalTime(), flightRequest.getDepartureTime()));
             throw new FlightRequestValidationException("Arrival and Departure date time is the same: " + arrivalTime + " " + departureTime);
 
-        } else if( arrivalTime.isBefore(departureTime)) {
+        } else if (arrivalTime.isBefore(departureTime)) {
 
             logger.info(String.format("Dates %s and %s are invalid", flightRequest.getArrivalTime(), flightRequest.getDepartureTime()));
             throw new FlightRequestValidationException("Arrival date time is before departure date time: " + arrivalTime + " " + departureTime);
@@ -144,7 +136,7 @@ public class FlightDatabaseService implements FlightService{
         String toAirport = flightRequest.getTo().getAirport().trim();
         String fromAirport = flightRequest.getFrom().getAirport().trim();
 
-        if ( toAirport.equalsIgnoreCase(fromAirport)) {
+        if (toAirport.equalsIgnoreCase(fromAirport)) {
             logger.info("Airports match each other: " + flightRequest.getTo() + " " + flightRequest.getFrom());
             throw new FlightRequestValidationException("To and From airports are the same!");
         } else {

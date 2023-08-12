@@ -7,17 +7,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, Long> {
 
-    @Query("SELECT f FROM Flight f " +
-            "WHERE f.from.airport ILIKE :from " +
-            "AND f.to.airport ILIKE :to " +
-            "AND substring(f.departureTime, 1, 10) ILIKE :departure_date")
+    @Query("select f from Flight f " +
+            "where f.from.airport = :from " +
+            "and f.to.airport = :to " +
+            "and DATE(f.departureTime) = :departure_date")
     List<Flight> fetchFlightsByValues(@Param("from") String from,
                                       @Param("to") String to,
-                                      @Param("departure_date") String departure_date);
+                                      @Param("departure_date") LocalDate departure_date);
 
+    List<Flight> findFlightByArrivalTimeAndDepartureTime(LocalDateTime arrivalTime, LocalDateTime departureTime);
 }

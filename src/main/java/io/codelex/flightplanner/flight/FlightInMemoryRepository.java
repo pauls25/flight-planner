@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Repository
@@ -51,12 +52,14 @@ public class FlightInMemoryRepository {
 
         for (Flight flight : flights.values()) {
 
-            String flightDepartureDate = flight.getDepartureTime().substring(0, 11).trim();
+            LocalDate flightDepartureDate = flight.getDepartureTime().toLocalDate();
+//            LocalDate requestDepartureDate =  LocalDate.parse(request.getDepartureDate());
+//            String flightDepartureDate = flight.getDepartureTime().substring(0, 11).trim();
             if (
                 request.getTo().trim().equalsIgnoreCase(flight.getTo().getAirport()) &&
                 request.getFrom().trim().equalsIgnoreCase(flight.getFrom().getAirport()) &&
-                request.getDepartureDate().trim().equals(flightDepartureDate)
-            ){
+                request.getDepartureDate().equals(flightDepartureDate)
+            ) {
                 searchResults.add(flight);
             }
         }

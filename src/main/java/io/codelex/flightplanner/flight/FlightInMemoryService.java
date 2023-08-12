@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -65,10 +64,10 @@ public class FlightInMemoryService implements FlightService {
 
         for (Flight flight : flightInMemoryRepository.getFlights().values()) {
             if (
-                    addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport()) &&
-                            addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport()) &&
-                            addFlightRequest.getDepartureTime().trim().equalsIgnoreCase(flight.getDepartureTime()) &&
-                            addFlightRequest.getArrivalTime().trim().equalsIgnoreCase(flight.getArrivalTime())
+                addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport()) &&
+                addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport()) &&
+                addFlightRequest.getDepartureTime().equals(flight.getDepartureTime()) &&
+                addFlightRequest.getArrivalTime().equals(flight.getArrivalTime())
             ) {
                 throw new FlightAlreadyAddedException("Flight already added: " + flight);
             }
@@ -120,10 +119,12 @@ public class FlightInMemoryService implements FlightService {
     }
 
     public boolean validateDates(AddFlightRequest flightRequest) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        LocalDateTime arrivalTime = LocalDateTime.parse(flightRequest.getArrivalTime(), dateTimeFormatter);
-        LocalDateTime departureTime = LocalDateTime.parse(flightRequest.getDepartureTime(), dateTimeFormatter);
+//        LocalDateTime arrivalTime = LocalDateTime.parse(flightRequest.getArrivalTime(), dateTimeFormatter);
+//        LocalDateTime departureTime = LocalDateTime.parse(flightRequest.getDepartureTime(), dateTimeFormatter);
+        LocalDateTime arrivalTime = flightRequest.getArrivalTime();
+        LocalDateTime departureTime = flightRequest.getDepartureTime();
 
         if (departureTime.equals(arrivalTime) || arrivalTime.isBefore(departureTime)) {
             logger.info(String.format("Dates %s and %s are invalid", flightRequest.getArrivalTime(), flightRequest.getDepartureTime()));

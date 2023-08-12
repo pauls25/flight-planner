@@ -6,7 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
-@Table(name="airports", uniqueConstraints = {@UniqueConstraint(columnNames = {"country", "city", "airport"})})
+@Table(name="airports"
+)
 public class Airport {
 
     @Id

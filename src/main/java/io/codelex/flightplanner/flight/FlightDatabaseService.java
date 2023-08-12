@@ -12,16 +12,15 @@ import io.codelex.flightplanner.flight.response.SearchFlightResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 
 public class FlightDatabaseService implements FlightService {
 
-    private FlightRepository flightRepository;
-    private AirportService airportService;
+    private final FlightRepository flightRepository;
+    private final AirportService airportService;
     Logger logger = LoggerFactory.getLogger(FlightDatabaseService.class);
 
     public FlightDatabaseService(FlightRepository flightRepository, AirportService airportService) {
@@ -31,6 +30,7 @@ public class FlightDatabaseService implements FlightService {
 
     @Override
     public synchronized AddFlightResponse addFlight(AddFlightRequest flightRequest) {
+        logger.debug("Got request: " + flightRequest);
         if (validateAddFlightRequest(flightRequest)) {
 
             Airport fromAirport = airportService.addAirport(flightRequest.getFrom());
@@ -58,13 +58,18 @@ public class FlightDatabaseService implements FlightService {
 
     @Override
     public boolean validateFlight(AddFlightRequest addFlightRequest) {
-        // TODO ar streams
-        // TODO don't use findAll()
-        for (Flight flight : flightRepository.findAll()) {
-            if (addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport())
-                    && addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport())
-                    && addFlightRequest.getDepartureTime().trim().equalsIgnoreCase(flight.getDepartureTime())
-                    && addFlightRequest.getArrivalTime().trim().equalsIgnoreCase(flight.getArrivalTime())) {
+
+        for (Flight flight : flightRepository.findFlightByArrivalTimeAndDepartureTime(
+                addFlightRequest.getArrivalTime(),
+                addFlightRequest.getDepartureTime()
+        )) {
+            if (
+                    addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport())
+                            && addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport())
+                            && addFlightRequest.getCarrier().trim().equalsIgnoreCase(flight.getCarrier())
+                            && addFlightRequest.getDepartureTime().equals(flight.getDepartureTime())
+                            && addFlightRequest.getArrivalTime().equals(flight.getArrivalTime())
+            ) {
                 throw new FlightAlreadyAddedException("Flight already added: " + flight);
             }
         }
@@ -103,7 +108,8 @@ public class FlightDatabaseService implements FlightService {
 
             String from = request.getFrom();
             String to = request.getTo();
-            String departure_date = request.getDepartureDate();
+            LocalDate departure_date = request.getDepartureDate();
+
             List<Flight> searchFlightsResult = flightRepository.fetchFlightsByValues(from, to, departure_date);
 
             return new SearchFlightResponse(0, searchFlightsResult.size(), searchFlightsResult);
@@ -112,20 +118,16 @@ public class FlightDatabaseService implements FlightService {
 
     @Override
     public boolean validateDates(AddFlightRequest flightRequest) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        LocalDateTime arrivalTime = LocalDateTime.parse(flightRequest.getArrivalTime(), dateTimeFormatter);
-        LocalDateTime departureTime = LocalDateTime.parse(flightRequest.getDepartureTime(), dateTimeFormatter);
-
-        if (departureTime.equals(arrivalTime)) {
+        if (flightRequest.getDepartureTime().equals(flightRequest.getArrivalTime())) {
 
             logger.info(String.format("Dates %s and %s are invalid", flightRequest.getArrivalTime(), flightRequest.getDepartureTime()));
-            throw new FlightRequestValidationException("Arrival and Departure date time is the same: " + arrivalTime + " " + departureTime);
+            throw new FlightRequestValidationException("Arrival and Departure date time is the same: " + flightRequest.getArrivalTime() + " " + flightRequest.getDepartureTime());
 
-        } else if (arrivalTime.isBefore(departureTime)) {
+        } else if (flightRequest.getArrivalTime().isBefore(flightRequest.getDepartureTime())) {
 
             logger.info(String.format("Dates %s and %s are invalid", flightRequest.getArrivalTime(), flightRequest.getDepartureTime()));
-            throw new FlightRequestValidationException("Arrival date time is before departure date time: " + arrivalTime + " " + departureTime);
+            throw new FlightRequestValidationException("Arrival date time is before departure date time: " + flightRequest.getArrivalTime() + " " + flightRequest.getDepartureTime());
         } else {
             return true;
         }

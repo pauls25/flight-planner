@@ -3,6 +3,7 @@ package io.codelex.flightplanner.flight.domain;
 import io.codelex.flightplanner.airport.domain.Airport;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -14,21 +15,21 @@ public class Flight {
     private Long id;
 
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "from_airport_id")
     private Airport from;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "to_airport_id")
     private Airport to;
     private String carrier;
 
     @Column(name = "departure_time")
-    private String departureTime;
+    private LocalDateTime departureTime;
     @Column(name = "arrival_time")
-    private String arrivalTime;
+    private LocalDateTime arrivalTime;
 
-    public Flight(Long id, Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
+    public Flight(Long id, Airport from, Airport to, String carrier, LocalDateTime departureTime, LocalDateTime arrivalTime) {
         this.id = id;
         this.from = from;
         this.to = to;
@@ -37,7 +38,7 @@ public class Flight {
         this.arrivalTime = arrivalTime;
     }
 
-    public Flight(Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
+    public Flight(Airport from, Airport to, String carrier, LocalDateTime departureTime, LocalDateTime arrivalTime) {
         this.from = from;
         this.to = to;
         this.carrier = carrier;
@@ -80,19 +81,19 @@ public class Flight {
         this.carrier = carrier;
     }
 
-    public String getDepartureTime() {
+    public LocalDateTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(String departureTime) {
+    public void setDepartureTime(LocalDateTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public String getArrivalTime() {
+    public LocalDateTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(String arrivalTime) {
+    public void setArrivalTime(LocalDateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 

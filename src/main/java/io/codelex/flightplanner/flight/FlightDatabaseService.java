@@ -59,20 +59,21 @@ public class FlightDatabaseService implements FlightService {
     @Override
     public boolean validateFlight(AddFlightRequest addFlightRequest) {
 
-        for (Flight flight : flightRepository.findFlightByArrivalTimeAndDepartureTime(
+        Airport fromAirport = airportService.addAirport(addFlightRequest.getFrom());
+        Airport toAirport = airportService.addAirport(addFlightRequest.getTo());
+        Optional<Flight> foundFlight = flightRepository.findByFromAndToAndCarrierAndArrivalTimeAndDepartureTime(
+                fromAirport,
+                toAirport,
+                addFlightRequest.getCarrier(),
                 addFlightRequest.getArrivalTime(),
                 addFlightRequest.getDepartureTime()
-        )) {
-            if (
-                    addFlightRequest.getTo().getAirport().trim().equalsIgnoreCase(flight.getTo().getAirport())
-                            && addFlightRequest.getFrom().getAirport().trim().equalsIgnoreCase(flight.getFrom().getAirport())
-                            && addFlightRequest.getCarrier().trim().equalsIgnoreCase(flight.getCarrier())
-                            && addFlightRequest.getDepartureTime().equals(flight.getDepartureTime())
-                            && addFlightRequest.getArrivalTime().equals(flight.getArrivalTime())
-            ) {
-                throw new FlightAlreadyAddedException("Flight already added: " + flight);
-            }
+        );
+
+        if (foundFlight.isPresent()){
+            throw new FlightAlreadyAddedException("Flight already added: " + foundFlight);
         }
+
+        logger.debug("Validated flight: " + addFlightRequest);
         return true;
     }
 

@@ -1,25 +1,52 @@
 package io.codelex.flightplanner.flight.domain;
 
 import io.codelex.flightplanner.airport.domain.Airport;
+import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "flights")
 public class Flight {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "flight_id")
     private Long id;
 
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "from_airport_id")
     private Airport from;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "to_airport_id")
     private Airport to;
     private String carrier;
-    private String departureTime;
-    private String arrivalTime;
 
-    public Flight( Long id, Airport from, Airport to, String carrier, String departureTime, String arrivalTime) {
+    @Column(name = "departure_time")
+    private LocalDateTime departureTime;
+    @Column(name = "arrival_time")
+    private LocalDateTime arrivalTime;
+
+    public Flight(Long id, Airport from, Airport to, String carrier, LocalDateTime departureTime, LocalDateTime arrivalTime) {
         this.id = id;
         this.from = from;
         this.to = to;
         this.carrier = carrier;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
+    }
+
+    public Flight(Airport from, Airport to, String carrier, LocalDateTime departureTime, LocalDateTime arrivalTime) {
+        this.from = from;
+        this.to = to;
+        this.carrier = carrier;
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
+    }
+
+    public Flight() {
     }
 
     public Long getId() {
@@ -54,32 +81,25 @@ public class Flight {
         this.carrier = carrier;
     }
 
-    public String getDepartureTime() {
+    public LocalDateTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(String departureTime) {
+    public void setDepartureTime(LocalDateTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public String getArrivalTime() {
+    public LocalDateTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(String arrivalTime) {
+    public void setArrivalTime(LocalDateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
     @Override
     public String toString() {
-        return "Flight{" +
-                "id=" + id +
-                ", from=" + from.getAirport() +
-                ", to=" + to.getAirport() +
-                ", carrier='" + carrier + '\'' +
-                ", departureTime='" + departureTime + '\'' +
-                ", arrivalTime='" + arrivalTime + '\'' +
-                '}';
+        return "Flight{" + "id=" + id + ", from=" + from.getAirport() + ", to=" + to.getAirport() + ", carrier='" + carrier + '\'' + ", departureTime='" + departureTime + '\'' + ", arrivalTime='" + arrivalTime + '\'' + '}';
     }
 
     @Override

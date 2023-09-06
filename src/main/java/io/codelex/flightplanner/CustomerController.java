@@ -16,8 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class CustomerController {
-    private FlightService flightService;
-    private AirportService airportService;
+    private final FlightService flightService;
+    private final AirportService airportService;
 
     public CustomerController(FlightService flightService, AirportService airportService) {
         this.flightService = flightService;
@@ -26,7 +26,7 @@ public class CustomerController {
 
     @PostMapping("/flights/search")
     @ResponseStatus(HttpStatus.OK)
-    public SearchFlightResponse searchFlight(@Valid @RequestBody SearchFlightRequest request){
+    public SearchFlightResponse searchFlight(@RequestBody @Valid SearchFlightRequest request){
         return flightService.searchFlightByValues(request);
     }
 

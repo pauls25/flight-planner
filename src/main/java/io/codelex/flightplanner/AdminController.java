@@ -12,26 +12,28 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin-api")
 public class AdminController {
-    private FlightService flightService;
+
+    private final FlightService flightService;
+
     public AdminController(FlightService flightService) {
         this.flightService = flightService;
     }
 
     @PutMapping("/flights")
     @ResponseStatus(HttpStatus.CREATED)
-    public AddFlightResponse addFlight(@Valid @RequestBody AddFlightRequest flightRequest){
+    public AddFlightResponse addFlight(@Valid @RequestBody AddFlightRequest flightRequest) {
         return flightService.addFlight(flightRequest);
     }
 
     @GetMapping("/flights/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public  GetFlightResponse fetchFlightById(@PathVariable("id") String id){
-        return flightService.fetchFlightById(Long.valueOf(id));
+    public GetFlightResponse fetchFlightById(@PathVariable("id") Long id) {
+        return flightService.fetchFlightById(id);
     }
 
     @DeleteMapping("/flights/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteFlightByFlightId(@PathVariable("id") String id){
+    public void deleteFlightByFlightId(@PathVariable("id") String id) {
         flightService.deleteFlightByFlightId(id);
     }
 

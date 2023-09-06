@@ -27,8 +27,8 @@ public class AdminController {
 
     @GetMapping("/flights/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public GetFlightResponse fetchFlightById(@PathVariable("id") String id) {
-        return flightService.fetchFlightById(Long.valueOf(id));
+    public GetFlightResponse fetchFlightById(@PathVariable("id") Long id) {
+        return flightService.fetchFlightById(id);
     }
 
     @DeleteMapping("/flights/{id}")
